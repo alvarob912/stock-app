@@ -34,7 +34,7 @@ app.post('/api/v1/products', async (req,res,next) => {
 
 
 
-const PORT = process.env.PORT || 4000
+const PORT = process.env.PORT || 5000
 
 // Levantar servidor en puerto 3000
 app.listen(PORT, () => {
