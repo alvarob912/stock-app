@@ -1,42 +1,16 @@
 const express = require("express")
-const path = require('path')
-const mongoose = require('mongoose')
-const { timeStamp } = require("console")
+const cors = require('cors')
 require('dotenv').config()
+const dbConnect = require('./db/index')
+const ProductRouter = require('./routes/products.routes')
 
 const app = express()
 
-mongoose.connect(
-    `mongodb+srv://alvarobijarra14_db_user:${process.env.PASSWORD}@cluster0.hxxrqiy.mongodb.net/stock-app?retryWrites=true&w=majority&appName=Cluster0`
-).then((result) => console.log("conexion exitosa a la base de datos"))
-.catch((err) => console.log(err))
+dbConnect(app)
 
-const productSchema = mongoose.Schema({
-  name: {type : String, required: true},
-  price: Number
-},
-{ timestamps: true }
-)
+app.use(cors({origin: true}))
 
-const Product = mongoose.model('Product', productSchema)
-
-app.use(express.static(path.join(__dirname, "public")))
 app.use(express.json())
 
-app.post('/api/v1/products', async (req,res,next) => {
-  const newProduct = new Product({
-    name: req.body.name,
-    price: req.body.price
-  })
-  await newProduct.save()
-  res.status(201).json({ok: true})
-})
+app.use('/api/v1/products', ProductRouter)
 
-
-
-const PORT = process.env.PORT || 5000
-
-// Levantar servidor en puerto 3000
-app.listen(PORT, () => {
-  console.log(`Servidor escuchando en http://localhost:${PORT}`);
-});
